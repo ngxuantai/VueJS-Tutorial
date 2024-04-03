@@ -1,22 +1,55 @@
 const app = Vue.createApp({
-  template: `<h3>Number: {{number}}</h3>
-      <button @click="onChangeNumber">Change number</button>
-      <button @click="onShowName">Show name</button>
-      <div v-if="showName"><h3>Name: {{name}}</h3></div>`,
+  //   template: ``,
   data() {
     return {
-      number: 5,
-      name: 'Nguyen Tai',
-      showName: false,
+      x: 0,
+      y: 0,
+
+      products: [
+        {
+          url: 'gg.com',
+          name: 'Product A',
+          price: 100,
+          isSelected: true,
+        },
+        {
+          name: 'Product B',
+          price: 150,
+          isSelected: true,
+        },
+        {
+          name: 'Product C',
+          price: 200,
+          isSelected: false,
+        },
+        {
+          name: 'Product D',
+          price: 250,
+          isSelected: false,
+        },
+      ],
     };
   },
   methods: {
-    onChangeNumber() {
-      this.number++;
-      console.log(this);
+    // Mouse event
+    onLogEvent(event, newX, newY) {
+      console.log('running event', event);
+      this.x = newX;
+      this.y = newY;
+      if (event.type == 'mousemove') {
+        this.x = event.offsetX;
+        this.y = event.offsetY;
+      }
     },
-    onShowName() {
-      this.showName = !this.showName;
+
+    onSelectProduct(product) {
+      product.isSelected = !product.isSelected;
+    },
+  },
+
+  computed: {
+    porductComputed() {
+      return this.products.filter((product) => product.price > 150);
     },
   },
 });
