@@ -1,5 +1,5 @@
 <template>
-  <h1>This is header app</h1>
+  <h1>Vue Project</h1>
 </template>
 
 <script>

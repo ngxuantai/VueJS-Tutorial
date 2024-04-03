@@ -1,29 +1,40 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js App" />
   <HeaderApp />
+  <teleport to="body">
+    <ModalComponent v-if="isShow" @closeModal="onToggleModal">
+      <template v-slot:header>
+        <h2>This is header</h2>
+      </template>
+      <label for="">Name</label>
+      <input type="text" />
+      <template v-slot:footer>
+        <button @click="onToggleModal">Close</button>
+      </template>
+    </ModalComponent>
+  </teleport>
+  <button @click="onToggleModal">Show modal</button>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
 import HeaderApp from "./components/Header.vue";
+import ModalComponent from "./components/Modal.vue";
 
 export default {
   name: "App",
   components: {
-    HelloWorld,
     HeaderApp,
+    ModalComponent,
+  },
+  data() {
+    return {
+      isShow: false,
+    };
+  },
+  methods: {
+    onToggleModal() {
+      this.isShow = !this.isShow;
+    },
   },
 };
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
