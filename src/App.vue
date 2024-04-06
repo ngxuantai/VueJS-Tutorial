@@ -1,14 +1,14 @@
 <template>
-  <quiz-form />
+  <nav-component />
+  <router-view />
 </template>
 
 <script>
-import QuizForm from "./components/QuizForm.vue";
+import NavComponent from "./components/Nav.vue";
 
 export default {
-  name: "App",
   components: {
-    QuizForm,
+    NavComponent,
   },
 };
 </script>
