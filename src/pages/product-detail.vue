@@ -11,28 +11,18 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { computed } from "vue";
 import { useRoute } from "vue-router";
+import { useStore } from "vuex";
 
 export default {
   setup() {
-    const product = ref(null);
-    const error = ref(null);
     const route = useRoute();
-    const fetchProduct = async () => {
-      try {
-        const res = await fetch(
-          `http://localhost:3000/products/${route.params.id}`
-        );
-        if (!res.ok) {
-          throw new Error("Cannot fetch data");
-        }
-        product.value = await res.json();
-      } catch (err) {
-        error.value = err.message;
-      }
-    };
-    fetchProduct();
+    const store = useStore();
+    store.dispatch("fetchProduct", { id: route.params.id });
+    const product = computed(() => {
+      return store.state.product;
+    });
     return {
       product,
     };

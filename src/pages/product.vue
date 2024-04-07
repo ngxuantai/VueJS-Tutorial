@@ -5,7 +5,7 @@
     v-model="searchPrice"
     placeholder="Type price to search"
   />
-  <div v-if="products.length">
+  <div v-if="allProducts.length">
     <div class="item" v-for="product in searchProducts" :key="product.id">
       <ProductItemVue :item="product" />
     </div>
@@ -20,6 +20,7 @@
 
 <script>
 import { ref, computed } from "vue";
+import { useStore } from "vuex";
 import ProductItemVue from "../components/ProductItem.vue";
 
 export default {
@@ -27,29 +28,22 @@ export default {
     ProductItemVue,
   },
   setup() {
+    const store = useStore();
     const searchPrice = ref("");
-    const products = ref([]);
-    const error = ref(null);
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch("http://localhost:3000/products");
-        if (!res.ok) {
-          throw new Error("Cannot fetch data");
-        }
-        products.value = await res.json();
-      } catch (err) {
-        error.value = err.message;
-      }
-    };
-
-    fetchProducts();
+    store.dispatch("fetchAllProducts");
+    const allProducts = computed(() => {
+      return store.state.allProducts;
+    });
+    const error = computed(() => {
+      return store.state.error;
+    });
     const searchProducts = computed(() => {
-      return products.value.filter((product) => {
+      return allProducts.value.filter((product) => {
         return product.price > searchPrice.value;
       });
     });
     return {
-      products,
+      allProducts,
       error,
       searchPrice,
       searchProducts,
