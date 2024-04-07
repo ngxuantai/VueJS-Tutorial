@@ -11,19 +11,31 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      product: null,
-    };
-  },
+import { ref } from "vue";
+import { useRoute } from "vue-router";
 
-  created() {
-    fetch(`http://localhost:3000/products/${this.$route.params.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        this.product = data;
-      });
+export default {
+  setup() {
+    const product = ref(null);
+    const error = ref(null);
+    const route = useRoute();
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:3000/products/${route.params.id}`
+        );
+        if (!res.ok) {
+          throw new Error("Cannot fetch data");
+        }
+        product.value = await res.json();
+      } catch (err) {
+        error.value = err.message;
+      }
+    };
+    fetchProduct();
+    return {
+      product,
+    };
   },
 };
 </script>

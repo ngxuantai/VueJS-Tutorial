@@ -1,12 +1,17 @@
 <template>
   <h1>List product</h1>
+  <input
+    type="number"
+    v-model="searchPrice"
+    placeholder="Type price to search"
+  />
   <div v-if="products.length">
-    <div class="item" v-for="product in products" :key="product.id">
-      <router-link :to="{ name: 'product-detail', params: { id: product.id } }">
-        {{ product.name }}
-      </router-link>
-      <h4>{{ product.name }}</h4>
+    <div class="item" v-for="product in searchProducts" :key="product.id">
+      <ProductItemVue :item="product" />
     </div>
+  </div>
+  <div v-else-if="error">
+    <p>{{ error }}</p>
   </div>
   <div v-else>
     <p>Loading...</p>
@@ -14,24 +19,41 @@
 </template>
 
 <script>
+import { ref, computed } from "vue";
+import ProductItemVue from "../components/ProductItem.vue";
+
 export default {
-  data() {
-    return {
-      products: [],
+  components: {
+    ProductItemVue,
+  },
+  setup() {
+    const searchPrice = ref("");
+    const products = ref([]);
+    const error = ref(null);
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/products");
+        if (!res.ok) {
+          throw new Error("Cannot fetch data");
+        }
+        products.value = await res.json();
+      } catch (err) {
+        error.value = err.message;
+      }
     };
-  },
 
-  created() {
-    fetch("http://localhost:3000/products")
-      .then((res) => res.json())
-      .then((data) => {
-        this.products = data;
+    fetchProducts();
+    const searchProducts = computed(() => {
+      return products.value.filter((product) => {
+        return product.price > searchPrice.value;
       });
-    console.log("fetch data");
-  },
-
-  mounted() {
-    console.log("mounted");
+    });
+    return {
+      products,
+      error,
+      searchPrice,
+      searchProducts,
+    };
   },
 };
 </script>
